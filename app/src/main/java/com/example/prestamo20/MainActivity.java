@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -28,7 +30,26 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
     }
 
-    public void onClick_guardar(View v){
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_solicitud_prestamo, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.mn_aceptar:
+                agregar();
+                break;
+            case R.id.mn_cancelar:
+                cancelar();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void agregar(){
         EditText nombre = findViewById(R.id.editText_nombre);
         cadena_nombre = nombre.getText().toString();
         EditText telefono = findViewById(R.id.editText_telefono);
@@ -75,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void onClick_cancelar(View v){ //Si el usuario da clic en el boton de cancelar
+    public void cancelar(){ //Si el usuario da clic en cancelar
         Intent intent = new Intent();
         setResult(RESULT_CANCELED, intent); //Le mandamos a decir que el usuario dio clic en cancelar a la activity que nos invoco
         finish(); //Cerramos la activity

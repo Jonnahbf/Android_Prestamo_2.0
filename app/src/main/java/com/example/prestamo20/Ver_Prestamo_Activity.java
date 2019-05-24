@@ -2,6 +2,7 @@ package com.example.prestamo20;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +18,7 @@ public class Ver_Prestamo_Activity extends AppCompatActivity {
         verPrestamos(posicion);
     }
 
-   public void verPrestamos(int posicion){ //Mostramos los datos de los prestamos en la activity
+    public void verPrestamos(int posicion){ //Mostramos los datos de los prestamos en la activity
         Prestamo pt = PrincipalActivity.lista_prestamo.get(posicion);
         TextView cliente = findViewById(R.id.txt_cliente);
         cliente.setText(pt.cliente);

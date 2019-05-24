@@ -1,61 +1,82 @@
 package com.example.prestamo20;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Ver_Clientes_Activity extends AppCompatActivity {
-    public static int a;
+    RecyclerView rv;
+    public static List<Client> lista_clientes = new ArrayList<>();
+    int position;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver__clientes_);
-        a = 0;
-        verClientes(a);
+        rv = (RecyclerView)findViewById(R.id.rv);
+        Bundle bundle= getIntent().getExtras();
+        lista_clientes = (List<Client>) bundle.get("clientes");
+        final RvAdapter adapter = new RvAdapter(lista_clientes);
+        adapter.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                position = rv.getChildAdapterPosition(v);
+                llamada(position);
+
+            }
+        });
+        GridLayoutManager llm = new GridLayoutManager(this,1);
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(llm);
+        rv.setAdapter(adapter);
+
     }
 
-    public void verClientes(int posicion){
-        Client cl = PrincipalActivity.lista_clientes.get(posicion);
-        TextView nombre = findViewById(R.id.txt_nombre);
-        nombre.setText(cl.nombre);
-        TextView apellido = findViewById(R.id.txt_apellido);
-        apellido.setText(cl.apellido);
-        TextView telefono = findViewById(R.id.txt_telefono);
-        telefono.setText(cl.telefono);
-        TextView sexo = findViewById(R.id.txt_sexo);
-        sexo.setText(cl.sexo);
-        TextView cedula = findViewById(R.id.txt_cedula);
-        cedula.setText(cl.cedula);
-        TextView direccion = findViewById(R.id.txt_direccion);
-        direccion.setText(cl.direccion);
-        TextView ocupacion= findViewById(R.id.txt_ocupacion);
-        ocupacion.setText(cl.ocupacion);
+    public void onClick_borrar(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Borrar");
+        builder.setMessage("Desea borrar?");
+        builder.setNegativeButton("No", null);
+        builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(Ver_Clientes_Activity.this, "Borrado", Toast.LENGTH_SHORT).show();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
-    public void onClick_siguiente(View v){
-        if(a == (PrincipalActivity.lista_clientes.size() - 1)){
-            Toast.makeText(this, "Llego al final", Toast.LENGTH_SHORT).show();
-        }
-        else{
-            a++;
-            verClientes(a);
-        }
+    public void onClick_editar(View view){
+        Toast.makeText(this, "Editar", Toast.LENGTH_SHORT).show();
     }
 
+    public void llamada(int position){
+        Intent intent = new Intent(this, Registro_Prestamo.class);
+        intent.putExtra("cliente", (Serializable) lista_clientes);
+        intent.putExtra("numero", position);
+        startActivityForResult(intent, 9999);
+    }
 
-    public void onClick_anterior(View v){
-        if(a==0){
-            Toast.makeText(this, "Llego al inicio", Toast.LENGTH_SHORT).show();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode==9999 && resultCode!=0){
+            Prestamo nuevo = (Prestamo) data.getExtras().getSerializable("prestamo");
+            Intent intent = new Intent();
+            intent.putExtra("prestamo", nuevo);
+            setResult(RESULT_OK, intent);
         }
-        else{
-            a--;
-            verClientes(a);
-        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }
