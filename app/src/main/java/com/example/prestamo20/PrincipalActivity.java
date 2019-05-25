@@ -70,7 +70,9 @@ public class PrincipalActivity extends AppCompatActivity {
                 }
                 else{
                     Intent intent3 = new Intent(this, Ver_Prestamo_Activity.class);
-                    startActivity(intent3);
+                    intent3.putExtra("prestamos", (Serializable) lista_prestamo);
+                    intent3.putExtra("cliente", (Serializable) lista_clientes);
+                    startActivityForResult(intent3, 3333);
                 }
                 break;
         }
@@ -98,18 +100,6 @@ public class PrincipalActivity extends AppCompatActivity {
                 lista_prestamo.add(nuevo);
             }
         }
-        /*else{ //Si es el codigo que le mandamos a la activity que registra los prestamos
-            if(resultCode==0){ //Si el usuario da clic en cancelar
-                tv.append("Cancelo ingreso de prestamo\n");
-                registerForContextMenu(tv);
-            }
-            else{ //Si el usuario da clic en guardar
-                Prestamo ptr = (Prestamo) data.getExtras().getSerializable("prestamo"); //Obtenemos los datos que nos envia la activity donde se registran los prestamos
-                lista_prestamo.add(ptr); //Añadimos el prestamo a la lista de prestamos
-                tv.append("Ingreso de nuevo prestamo \n");
-                registerForContextMenu(tv);
-            }
-        }*/
         super.onActivityResult(requestCode, resultCode, data);
     }
 
