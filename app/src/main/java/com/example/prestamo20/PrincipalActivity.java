@@ -1,5 +1,6 @@
 package com.example.prestamo20;
 
+import android.arch.persistence.room.Room;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -25,9 +26,10 @@ import java.util.List;
 
 public class PrincipalActivity extends AppCompatActivity {
 
-    public static List<Client> lista_clientes = new ArrayList<>(); //Almacenara todos los clientes que guardemos
-   public static List<Prestamo> lista_prestamo = new ArrayList<>();
-   public static TextView tv;
+    public DataBase db;
+    public static List<Client> lista_clientes = new ArrayList<>();
+    public static List<Prestamo> lista_prestamo = new ArrayList<>();
+    public static TextView tv;
 
 
     @Override
@@ -35,7 +37,10 @@ public class PrincipalActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_principal);
         tv = findViewById(R.id.tv_acciones);
-
+        db= Room.databaseBuilder(getApplicationContext(),
+                DataBase.class, "Prestamo").allowMainThreadQueries().build();
+        lista_clientes = db.clienteDao().ObtenerTodo();
+        lista_prestamo = db.prestamoDao().ObtenerTodo();
     }
 
     @Override
@@ -49,6 +54,7 @@ public class PrincipalActivity extends AppCompatActivity {
         switch (item.getItemId()) { //Verificamos que item ha seleccionado el usuario
             case R.id.mn_icon_nuevo:
                 Intent intent = new Intent(this, MainActivity.class);
+                intent.putExtra("ID",0);
                 startActivityForResult(intent, 1234);
                 break;
             case R.id.mn_acerca_de:
@@ -60,7 +66,6 @@ public class PrincipalActivity extends AppCompatActivity {
                 }
                 else{
                     Intent intent2 = new Intent(this, Ver_Clientes_Activity.class);
-                    intent2.putExtra("clientes", (Serializable) lista_clientes);
                     startActivityForResult(intent2, 2222);
                 }
                 break;
@@ -70,8 +75,7 @@ public class PrincipalActivity extends AppCompatActivity {
                 }
                 else{
                     Intent intent3 = new Intent(this, Ver_Prestamo_Activity.class);
-                    intent3.putExtra("prestamos", (Serializable) lista_prestamo);
-                    intent3.putExtra("cliente", (Serializable) lista_clientes);
+
                     startActivityForResult(intent3, 3333);
                 }
                 break;
@@ -90,6 +94,8 @@ public class PrincipalActivity extends AppCompatActivity {
             else{ //Si el usuario da clic en guardar
                 Client nuevo = (Client) data.getExtras().getSerializable("cliente"); //Obtenemos los datos que nos envia la activity donde se registran los clientes
                 lista_clientes.add(nuevo); //Añadimos el cliente a la lista de clientes
+                long id = db.clienteDao().Insertar(nuevo);
+                nuevo.setId((int)id);
                 tv.append("Ingreso de cliente" + " "+ nuevo.nombre + "\n");
                 registerForContextMenu(tv);
             }
@@ -98,6 +104,8 @@ public class PrincipalActivity extends AppCompatActivity {
             if(resultCode!=0){
                 Prestamo nuevo = (Prestamo) data.getExtras().getSerializable("prestamo");
                 lista_prestamo.add(nuevo);
+                long id = db.prestamoDao().Insertar(nuevo);
+                nuevo.setId((int)id);
             }
         }
         super.onActivityResult(requestCode, resultCode, data);

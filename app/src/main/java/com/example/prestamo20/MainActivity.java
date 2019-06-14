@@ -1,5 +1,6 @@
 package com.example.prestamo20;
 
+import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
@@ -23,11 +24,20 @@ public class MainActivity extends AppCompatActivity {
     public String cadena_sexo;
     public String cadena_ocupacion;
     public Client nuevo = new Client();
+    DataBase db;
+    int id = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        db= Room.databaseBuilder(getApplicationContext(),
+                DataBase.class, "Prestamo").allowMainThreadQueries().build();
+        Bundle bundle = getIntent().getExtras();
+        int id = bundle.getInt("ID");
+        if(id!=0){
+            Actualizar(id);
+        }
     }
 
     @Override
@@ -96,11 +106,35 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     public void cancelar(){ //Si el usuario da clic en cancelar
         Intent intent = new Intent();
         setResult(RESULT_CANCELED, intent); //Le mandamos a decir que el usuario dio clic en cancelar a la activity que nos invoco
         finish(); //Cerramos la activity
     }
 
+    public void Actualizar(int id){
+        Client editar = new Client();
+        editar = db.clienteDao().ObtenerCLiente(id);
+        EditText nombre = findViewById(R.id.editText_nombre);
+        nombre.setText(editar.getNombre());
+        EditText telefono = findViewById(R.id.editText_telefono);
+        telefono.setText(editar.getTelefono());
+        EditText cedula = findViewById(R.id.editText_cedula);
+        cedula.setText(editar.getCedula());
+        EditText direccion = findViewById(R.id.editText_direccion);
+        direccion.setText(editar.getDireccion());
+        EditText apellido = findViewById(R.id.editText_apellido);
+        apellido.setText(editar.getApellido());
+        EditText ocupacion = findViewById(R.id.editText_ocupacion);
+        ocupacion.setText(editar.getOcupacion());
+        Spinner sexo = findViewById(R.id.spinner_sexo);
+        if(editar.getSexo() == "Femenino"){
+            sexo.setSelection(0);
+        }
+        else{
+            sexo.setSelection(1);
+        }
+    }
 
 }

@@ -12,16 +12,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Registro_Prestamo extends AppCompatActivity {
-    public static List<Client> lista_clientes = new ArrayList<>();
+    Client client;
     int position;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro__prestamo);
         Bundle bundle= getIntent().getExtras();
-        lista_clientes = (List<Client>) bundle.get("cliente");
-        position = (int) bundle.get("numero");
-        rellenar();
+        client = (Client) bundle.getSerializable("cliente");
+        rellenar(client);
     }
 
     @Override
@@ -33,6 +32,7 @@ public class Registro_Prestamo extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         Intent i = new Intent(this, CalcularPrestamoActivity.class);
+        i.putExtra("cliente", client);
         startActivityForResult(i, 1234);
         return super.onOptionsItemSelected(item);
     }
@@ -51,7 +51,7 @@ public class Registro_Prestamo extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void rellenar(){
+    public void rellenar(Client cl){
         TextView tvnombre = findViewById(R.id.tv_nombre);
         TextView tvapellido = findViewById(R.id.tv_apellido);
         TextView tvsexo = findViewById(R.id.tv_sexo);
@@ -59,7 +59,6 @@ public class Registro_Prestamo extends AppCompatActivity {
         TextView tvcedula = findViewById(R.id.tv_cedula);
         TextView tvocupacion = findViewById(R.id.tv_ocupacion);
         TextView tvdireccion = findViewById(R.id.tv_direccion);
-        Client cl = lista_clientes.get(position);
         tvnombre.setText(cl.nombre);
         tvapellido.setText(cl.apellido);
         tvcedula.setText(cl.cedula);

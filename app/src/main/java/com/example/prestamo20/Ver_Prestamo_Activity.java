@@ -1,5 +1,6 @@
 package com.example.prestamo20;
 
+import android.arch.persistence.room.Room;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -16,15 +17,17 @@ public class Ver_Prestamo_Activity extends AppCompatActivity {
     public List<Client> lista_cliente = new ArrayList<>();
     public Adaptador_Prestamo adapter;
     public ListView lv;
+    DataBase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver__prestamo_);
+        db= Room.databaseBuilder(getApplicationContext(),
+                DataBase.class, "Prestamo").allowMainThreadQueries().build();
         lv = findViewById(R.id.lv);
-        Bundle bundle= getIntent().getExtras();
-        lista_prestamo = (List<Prestamo>) bundle.get("prestamos");
-        lista_cliente = (List<Client>) bundle.get("cliente");
+        lista_prestamo = db.prestamoDao().ObtenerTodo();
+        lista_cliente = db.clienteDao().ObtenerTodo();
         adapter = new Adaptador_Prestamo(lista_prestamo, lista_cliente, this);
         lv.setAdapter(adapter);
     }

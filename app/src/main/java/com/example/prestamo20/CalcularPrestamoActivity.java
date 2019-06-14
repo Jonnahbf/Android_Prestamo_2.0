@@ -1,15 +1,20 @@
 package com.example.prestamo20;
 
 import android.content.Intent;
-import android.support.annotation.Nullable;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,7 +22,6 @@ import android.widget.Toast;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -30,14 +34,15 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
     private TextView cuota;
     private TextView fecha_fin;
     private String date;
-    public Spinner sp;
-    public static List<String> clientes = new ArrayList<>(); //Lista que almacenara los nombres y apellidos de los clientes para mostrarlos en el spinner
+    private TextView nombre;
+    private Client client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calcular_prestamo);
-
+        Bundle bundle= getIntent().getExtras();
+        client = (Client) bundle.getSerializable("cliente");
         date = new SimpleDateFormat("dd/MM/yyyy").format(new Date());
         TextView fecha = findViewById(R.id.textView_fecha); //Obtenemos el TextView de fecha
         plazo = findViewById(R.id.editText_plazo); //Obtenemos el EditText de plazo
@@ -48,7 +53,8 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
         cuota = findViewById(R.id.textViewMontoCuota); //Obtenemos el TextView de cuota
         fecha.setText(date);
         fecha_de_pago();
-        Cargar_Clientes();
+        nombre = findViewById(R.id.tv_cliente);
+        nombre.setText(client.getNombre() + " " + client.getApellido());
         plazo.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -161,8 +167,9 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
         }
         else{
             Prestamo prest = new Prestamo();
-            prest.cliente = sp.getSelectedItem().toString();
+            prest.cliente = nombre.getText().toString();
             prest.monto = aux_monto;
+            prest.id_cliente = client.getId();
             prest.plazo = aux_plazo;
             interes = findViewById(R.id.spinner_interes);
             prest.interes = interes.getSelectedItem().toString();
@@ -175,7 +182,6 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
             Intent intent = new Intent();
             intent.putExtra("prestamo", prest);
             setResult(RESULT_OK, intent);
-            clientes.removeAll(clientes);
             finish();
         }
 
@@ -184,19 +190,117 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
     public void onClick_cancelar(View v){
         Intent intent = new Intent();
         setResult(RESULT_CANCELED, intent);
-        clientes.removeAll(clientes);
         finish();
     }
 
-    public void Cargar_Clientes(){
-        sp = findViewById(R.id.sp_clientes); //Control Spinner
-        for(int i=0; i<PrincipalActivity.lista_clientes.size(); i++){ //Hacemos un for para almacenar los nombres y apellidos de los clientes que se han ingresado
-            String aux = PrincipalActivity.lista_clientes.get(i).nombre + " " + PrincipalActivity.lista_clientes.get(i).apellido;
-            clientes.add(aux);
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, clientes);
-        //Asignar el adaptador al espiner
-        sp.setAdapter(adapter);
-    }
 
+    //RvAdapter
+    public static class RvAdapter extends RecyclerView.Adapter<RvAdapter.ClienteHolder> implements View.OnClickListener {
+
+        private List<Client> Lista_Clientes;
+        private OnItemClickListener onItemClickListener;
+        private OnClickDeleteItemListener onClickDeleteItemListener; //Se crea el objeto de tipo interfaz
+        private OnClickEditItemListener onClickEditItemListener; //Se crea el objeto de tipo interfaz
+
+        @Override
+        public void onClick(View v) {
+
+        }
+
+        public interface OnItemClickListener{
+            void onItemClick(Client client, int position);
+        }
+
+        public interface OnClickDeleteItemListener
+        {
+            void onItemClick(Client client, int pos);
+        }
+
+        public interface OnClickEditItemListener //Para que el botón editar reaccione al evento clic
+        {
+            void onItemClick(Client client, int pos);
+        }
+
+        public void setOnClickEditItemListener(OnClickEditItemListener onClickEditItemListener) {
+            this.onClickEditItemListener = onClickEditItemListener;
+        }
+
+
+        public void setOnClickDeleteItemListener(OnClickDeleteItemListener onClickDeleteItemListener) {
+            this.onClickDeleteItemListener = onClickDeleteItemListener;
+        }
+
+
+        public RvAdapter(List<Client> Cliente){
+
+            this.Lista_Clientes = Cliente;
+
+        }
+
+        @NonNull
+        @Override
+        public ClienteHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater= LayoutInflater.from(parent.getContext());
+            View view= inflater.inflate(R.layout.clientes,parent,false);
+            view.setOnClickListener(this);
+            ClienteHolder clienteHolder = new ClienteHolder(view);
+            return clienteHolder;
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull ClienteHolder holder, int position) {
+            holder.tvNombre.setText(Lista_Clientes.get(position).getNombre());
+            holder.tvApellido.setText(Lista_Clientes.get(position).getApellido());
+        }
+
+        @Override
+        public int getItemCount() {
+            return Lista_Clientes.size();
+        }
+
+        public void setOnItemClickListener(OnItemClickListener listener){
+            this.onItemClickListener = listener;
+        }
+
+
+
+        public class ClienteHolder extends RecyclerView.ViewHolder{
+            public TextView tvNombre;
+            public TextView tvApellido;
+            public ImageButton borrar;
+            public ImageButton editar;
+            CardView cv;
+
+
+            public ClienteHolder(View itemView) {
+                super(itemView);
+
+                cv = (CardView)itemView.findViewById(R.id.cv);
+                this.tvNombre = itemView.findViewById(R.id.tv_nombre);
+                this.tvApellido = itemView.findViewById(R.id.tv_apellido);
+                this.editar = itemView.findViewById((R.id.img_btn_editar));
+                this.borrar = itemView.findViewById(R.id.img_btn_borrar);
+
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onItemClickListener.onItemClick(Lista_Clientes.get(getAdapterPosition()), getAdapterPosition());
+                    }
+                });
+                borrar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickDeleteItemListener.onItemClick(Lista_Clientes.get(getAdapterPosition()), getAdapterPosition());
+                    }
+                });
+
+                editar.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickEditItemListener.onItemClick(Lista_Clientes.get(getAdapterPosition()), getAdapterPosition());
+                    }
+                });
+            }
+        }
+    }
 }

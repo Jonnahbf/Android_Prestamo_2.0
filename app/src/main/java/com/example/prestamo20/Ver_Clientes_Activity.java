@@ -1,5 +1,6 @@
 package com.example.prestamo20;
 
+import android.arch.persistence.room.Room;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -17,25 +18,56 @@ import java.util.List;
 
 public class Ver_Clientes_Activity extends AppCompatActivity {
     RecyclerView rv;
-    public static List<Client> lista_clientes = new ArrayList<>();
-    int position;
+    public DataBase db;
+    public List<Client> lista_clientes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ver__clientes_);
-        rv = (RecyclerView)findViewById(R.id.rv);
-        Bundle bundle= getIntent().getExtras();
-        lista_clientes = (List<Client>) bundle.get("clientes");
-        final RvAdapter adapter = new RvAdapter(lista_clientes);
-        adapter.setOnClickListener(new View.OnClickListener() {
+        rv = findViewById(R.id.rv);
+        db= Room.databaseBuilder(getApplicationContext(),
+                DataBase.class, "Prestamo").allowMainThreadQueries().build();
+        lista_clientes = db.clienteDao().ObtenerTodo();
+        final CalcularPrestamoActivity.RvAdapter adapter = new CalcularPrestamoActivity.RvAdapter(lista_clientes);
+        adapter.setOnClickDeleteItemListener(new CalcularPrestamoActivity.RvAdapter.OnClickDeleteItemListener() {
             @Override
-            public void onClick(View v) {
-                position = rv.getChildAdapterPosition(v);
-                llamada(position);
-
+            public void onItemClick(final Client client, final int pos) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(Ver_Clientes_Activity.this);
+                builder.setMessage("Desea eliminar "+ client.getNombre() +"?");
+                builder.setNegativeButton("No",null);
+                builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        db.clienteDao().Borrar(client);
+                        lista_clientes.remove(client);
+                        Toast.makeText(Ver_Clientes_Activity.this, "Eliminado!", Toast.LENGTH_SHORT).show();
+                        adapter.notifyItemRemoved(pos);
+                        // adapter.notifyDataSetChanged();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
+
+        adapter.setOnItemClickListener(new CalcularPrestamoActivity.RvAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(Client client, int position) {
+                Intent intent = new Intent(Ver_Clientes_Activity.this, Registro_Prestamo.class);
+                intent.putExtra("cliente", client);
+                startActivityForResult(intent, 9999);
+            }
+        });
+        adapter.setOnClickEditItemListener(new CalcularPrestamoActivity.RvAdapter.OnClickEditItemListener() {
+            @Override
+            public void onItemClick(Client client, int pos) {
+                Intent intent = new Intent(Ver_Clientes_Activity.this, MainActivity.class);
+                intent.putExtra("ID", client.getId());
+                startActivityForResult(intent, 8888);
+            }
+        });
+
         GridLayoutManager llm = new GridLayoutManager(this,1);
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
@@ -43,31 +75,7 @@ public class Ver_Clientes_Activity extends AppCompatActivity {
 
     }
 
-    public void onClick_borrar(View view){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Borrar");
-        builder.setMessage("Desea borrar?");
-        builder.setNegativeButton("No", null);
-        builder.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(Ver_Clientes_Activity.this, "Borrado", Toast.LENGTH_SHORT).show();
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 
-    public void onClick_editar(View view){
-        Toast.makeText(this, "Editar", Toast.LENGTH_SHORT).show();
-    }
-
-    public void llamada(int position){
-        Intent intent = new Intent(this, Registro_Prestamo.class);
-        intent.putExtra("cliente", (Serializable) lista_clientes);
-        intent.putExtra("numero", position);
-        startActivityForResult(intent, 9999);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

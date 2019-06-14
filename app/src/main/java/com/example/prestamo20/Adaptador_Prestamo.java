@@ -48,7 +48,7 @@ public class Adaptador_Prestamo extends BaseAdapter{
         TextView plazo = convertView.findViewById(R.id.tv_plazo);
         monto.setText(ptr.monto);
         plazo.setText(ptr.plazo);
-
+        nombre.setText(lista_cliente.get(position).getNombre());
         return convertView;
     }
 }

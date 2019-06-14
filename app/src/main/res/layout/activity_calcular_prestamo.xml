@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="52dp"
         android:text="Plazo"
         android:textColor="#000000"
@@ -42,31 +42,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.886"
         app:layout_constraintStart_toEndOf="@+id/interes"
-        app:layout_constraintTop_toBottomOf="@+id/sp_clientes" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_cliente" />
 
     <TextView
         android:id="@+id/interes"
         android:layout_width="100dp"
         android:layout_height="25dp"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:text="Interés(%)"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintStart_toEndOf="@+id/monto_credito"
-        app:layout_constraintTop_toBottomOf="@+id/sp_clientes" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_cliente" />
 
     <TextView
         android:id="@+id/monto_credito"
         android:layout_width="0dp"
         android:layout_height="25dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="8dp"
         android:text="Monto Crédito"
         android:textColor="#000000"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sp_clientes" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_cliente" />
 
             <TextView
                 android:id="@+id/credito"
@@ -212,15 +212,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/fecha_fin" />
 
-    <Spinner
-        android:id="@+id/sp_clientes"
-        android:layout_width="336dp"
-        android:layout_height="24dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/credito" />
-
     <Button
         android:id="@+id/btn_guardar"
         android:layout_width="wrap_content"
@@ -242,5 +233,17 @@
         android:text="Cancelar"
         app:layout_constraintEnd_toStartOf="@+id/btn_guardar"
         app:layout_constraintTop_toBottomOf="@+id/txt_montoCuota" />
+
+    <TextView
+        android:id="@+id/tv_cliente"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        android:textColor="#000"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/credito" />
 
 </android.support.constraint.ConstraintLayout>
