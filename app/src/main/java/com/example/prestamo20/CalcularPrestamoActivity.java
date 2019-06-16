@@ -169,7 +169,7 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
             Prestamo prest = new Prestamo();
             prest.cliente = nombre.getText().toString();
             prest.monto = aux_monto;
-            prest.id_cliente = client.getId();
+            prest.id_cliente = client.getId_client();
             prest.plazo = aux_plazo;
             interes = findViewById(R.id.spinner_interes);
             prest.interes = interes.getSelectedItem().toString();
@@ -197,7 +197,7 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
     //RvAdapter
     public static class RvAdapter extends RecyclerView.Adapter<RvAdapter.ClienteHolder> implements View.OnClickListener {
 
-        private List<Client> Lista_Clientes;
+        private List<ClienteConPrestamo> Lista_Clientes;
         private OnItemClickListener onItemClickListener;
         private OnClickDeleteItemListener onClickDeleteItemListener; //Se crea el objeto de tipo interfaz
         private OnClickEditItemListener onClickEditItemListener; //Se crea el objeto de tipo interfaz
@@ -231,7 +231,7 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
         }
 
 
-        public RvAdapter(List<Client> Cliente){
+        public RvAdapter(List<ClienteConPrestamo> Cliente){
 
             this.Lista_Clientes = Cliente;
 
@@ -249,8 +249,8 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull ClienteHolder holder, int position) {
-            holder.tvNombre.setText(Lista_Clientes.get(position).getNombre());
-            holder.tvApellido.setText(Lista_Clientes.get(position).getApellido());
+            holder.tvNombre.setText(Lista_Clientes.get(position).getClient().getNombre());
+            holder.tvApellido.setText(Lista_Clientes.get(position).getClient().getApellido());
         }
 
         @Override
@@ -284,20 +284,20 @@ public class CalcularPrestamoActivity extends AppCompatActivity {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onItemClickListener.onItemClick(Lista_Clientes.get(getAdapterPosition()), getAdapterPosition());
+                        onItemClickListener.onItemClick(Lista_Clientes.get(getAdapterPosition()).getClient(), getAdapterPosition());
                     }
                 });
                 borrar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onClickDeleteItemListener.onItemClick(Lista_Clientes.get(getAdapterPosition()), getAdapterPosition());
+                        onClickDeleteItemListener.onItemClick(Lista_Clientes.get(getAdapterPosition()).getClient(), getAdapterPosition());
                     }
                 });
 
                 editar.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onClickEditItemListener.onItemClick(Lista_Clientes.get(getAdapterPosition()), getAdapterPosition());
+                        onClickEditItemListener.onItemClick(Lista_Clientes.get(getAdapterPosition()).getClient(), getAdapterPosition());
                     }
                 });
             }

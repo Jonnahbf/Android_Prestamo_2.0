@@ -13,13 +13,11 @@ import java.util.List;
 
 public class Adaptador_Prestamo extends BaseAdapter{
 
-    private List<Prestamo> lista_prestamo = new ArrayList<>();
-    private List<Client> lista_cliente = new ArrayList<>();
+    private List<PrestamoConCliente> lista_prestamo = new ArrayList<>();
     private Context context;
 
-    public Adaptador_Prestamo(List<Prestamo> lista_prestamo, List<Client> lista_cliente, Context context) {
+    public Adaptador_Prestamo(List<PrestamoConCliente> lista_prestamo, Context context) {
         this.lista_prestamo = lista_prestamo;
-        this.lista_cliente = lista_cliente;
         this.context = context;
     }
 
@@ -41,14 +39,14 @@ public class Adaptador_Prestamo extends BaseAdapter{
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Prestamo ptr = (Prestamo) getItem(position);
+        PrestamoConCliente ptr = (PrestamoConCliente) getItem(position);
         convertView = (View) LayoutInflater.from(context).inflate(R.layout.item_prestamo, null);
         TextView nombre = convertView.findViewById(R.id.tv_nombre);
         TextView monto = convertView.findViewById(R.id.tv_monto);
         TextView plazo = convertView.findViewById(R.id.tv_plazo);
-        monto.setText(ptr.monto);
-        plazo.setText(ptr.plazo);
-        nombre.setText(lista_cliente.get(position).getNombre());
+        monto.setText(ptr.getPrestamo().getMonto());
+        plazo.setText(ptr.getPrestamo().getPlazo());
+        nombre.setText(lista_prestamo.get(position).getClient().getNombre());
         return convertView;
     }
 }

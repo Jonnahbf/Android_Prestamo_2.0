@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Ver_Prestamo_Activity extends AppCompatActivity {
-    public List<Prestamo> lista_prestamo = new ArrayList<>();
-    public List<Client> lista_cliente = new ArrayList<>();
+    public List<PrestamoConCliente> lista_prestamo = new ArrayList<>();
     public Adaptador_Prestamo adapter;
     public ListView lv;
     DataBase db;
@@ -26,9 +25,8 @@ public class Ver_Prestamo_Activity extends AppCompatActivity {
         db= Room.databaseBuilder(getApplicationContext(),
                 DataBase.class, "Prestamo").allowMainThreadQueries().build();
         lv = findViewById(R.id.lv);
-        lista_prestamo = db.prestamoDao().ObtenerTodo();
-        lista_cliente = db.clienteDao().ObtenerTodo();
-        adapter = new Adaptador_Prestamo(lista_prestamo, lista_cliente, this);
+        lista_prestamo.addAll(db.prestamoDao().ObtenerTodo());
+        adapter = new Adaptador_Prestamo(lista_prestamo, this);
         lv.setAdapter(adapter);
     }
 }

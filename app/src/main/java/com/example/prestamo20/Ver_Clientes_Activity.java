@@ -19,7 +19,7 @@ import java.util.List;
 public class Ver_Clientes_Activity extends AppCompatActivity {
     RecyclerView rv;
     public DataBase db;
-    public List<Client> lista_clientes = new ArrayList<>();
+    public List<ClienteConPrestamo> lista_clientes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +63,7 @@ public class Ver_Clientes_Activity extends AppCompatActivity {
             @Override
             public void onItemClick(Client client, int pos) {
                 Intent intent = new Intent(Ver_Clientes_Activity.this, MainActivity.class);
-                intent.putExtra("ID", client.getId());
+                intent.putExtra("ID", client.getId_client());
                 startActivityForResult(intent, 8888);
             }
         });

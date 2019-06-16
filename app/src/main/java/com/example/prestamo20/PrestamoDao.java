@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Transaction;
 import android.arch.persistence.room.Update;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public interface PrestamoDao {
     @Update
     void Actualizar(Prestamo prestamo);
 
-    @Query("SELECT * FROM Prestamo")
-    List<Prestamo> ObtenerTodo();
+    @Transaction
+    @Query("Select nombre, Prestamo.* from Prestamo inner join clientTB on clientTB.id_client = id_cliente")
+    List<PrestamoConCliente> ObtenerTodo();
 }

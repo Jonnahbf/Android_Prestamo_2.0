@@ -7,10 +7,10 @@ import android.support.v7.app.AppCompatActivity;
 
 import java.io.Serializable;
 
-@Entity
+@Entity(tableName = "clientTB")
 public class Client implements Serializable {
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int id_client;
     public String nombre;
     public String apellido;
     public String telefono;
@@ -36,12 +36,12 @@ public class Client implements Serializable {
 //        this.direccion = direccion;
 //    }
 
-    public int getId() {
-        return id;
+    public int getId_client() {
+        return id_client;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setId_client(int id) {
+        this.id_client = id;
     }
 
     public String getNombre() {

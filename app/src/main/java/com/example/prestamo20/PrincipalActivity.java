@@ -27,8 +27,8 @@ import java.util.List;
 public class PrincipalActivity extends AppCompatActivity {
 
     public DataBase db;
-    public static List<Client> lista_clientes = new ArrayList<>();
-    public static List<Prestamo> lista_prestamo = new ArrayList<>();
+    public static List<ClienteConPrestamo> lista_clientes = new ArrayList<>();
+    public static List<PrestamoConCliente> lista_prestamo = new ArrayList<>();
     public static TextView tv;
 
 
@@ -39,8 +39,8 @@ public class PrincipalActivity extends AppCompatActivity {
         tv = findViewById(R.id.tv_acciones);
         db= Room.databaseBuilder(getApplicationContext(),
                 DataBase.class, "Prestamo").allowMainThreadQueries().build();
-        lista_clientes = db.clienteDao().ObtenerTodo();
-        lista_prestamo = db.prestamoDao().ObtenerTodo();
+        lista_clientes.addAll(db.clienteDao().ObtenerTodo());
+        lista_prestamo.addAll(db.prestamoDao().ObtenerTodo());
     }
 
     @Override
@@ -93,9 +93,11 @@ public class PrincipalActivity extends AppCompatActivity {
 
             else{ //Si el usuario da clic en guardar
                 Client nuevo = (Client) data.getExtras().getSerializable("cliente"); //Obtenemos los datos que nos envia la activity donde se registran los clientes
-                lista_clientes.add(nuevo); //Añadimos el cliente a la lista de clientes
+                ClienteConPrestamo clienteConPrestamo = new ClienteConPrestamo();
+                clienteConPrestamo.setClient(nuevo);
+                lista_clientes.add(clienteConPrestamo);
                 long id = db.clienteDao().Insertar(nuevo);
-                nuevo.setId((int)id);
+                nuevo.setId_client((int)id);
                 tv.append("Ingreso de cliente" + " "+ nuevo.nombre + "\n");
                 registerForContextMenu(tv);
             }
@@ -103,7 +105,9 @@ public class PrincipalActivity extends AppCompatActivity {
         if(requestCode==2222){
             if(resultCode!=0){
                 Prestamo nuevo = (Prestamo) data.getExtras().getSerializable("prestamo");
-                lista_prestamo.add(nuevo);
+                PrestamoConCliente prestamoConCliente = new PrestamoConCliente();
+                prestamoConCliente.setPrestamo(nuevo);
+                lista_prestamo.add(prestamoConCliente);
                 long id = db.prestamoDao().Insertar(nuevo);
                 nuevo.setId((int)id);
             }
