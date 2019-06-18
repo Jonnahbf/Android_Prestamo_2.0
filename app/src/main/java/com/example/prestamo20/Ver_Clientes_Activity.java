@@ -64,6 +64,7 @@ public class Ver_Clientes_Activity extends AppCompatActivity {
             public void onItemClick(Client client, int pos) {
                 Intent intent = new Intent(Ver_Clientes_Activity.this, MainActivity.class);
                 intent.putExtra("ID", client.getId_client());
+                intent.putExtra("posicion", pos);
                 startActivityForResult(intent, 8888);
             }
         });
@@ -84,6 +85,17 @@ public class Ver_Clientes_Activity extends AppCompatActivity {
             Intent intent = new Intent();
             intent.putExtra("prestamo", nuevo);
             setResult(RESULT_OK, intent);
+        }
+        if(requestCode==8888 && resultCode!=0){
+            Client nuevo = (Client) data.getExtras().getSerializable("cliente");
+            Toast.makeText(this, "" + nuevo.getId_client(), Toast.LENGTH_SHORT).show();
+            db.clienteDao().Actualizar(nuevo);
+            int pos = data.getExtras().getInt("posicion");
+            ClienteConPrestamo clienteConPrestamo = new ClienteConPrestamo();
+            clienteConPrestamo.setClient(nuevo);
+            lista_clientes.set(pos, clienteConPrestamo);
+            //Toast.makeText(this, "Nuevo " + nuevo.getNombre() , Toast.LENGTH_SHORT).show();
+            rv.getAdapter().notifyDataSetChanged();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

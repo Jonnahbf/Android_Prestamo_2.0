@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
     public Client nuevo = new Client();
     DataBase db;
     int id = 0;
+    int posicion = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,8 @@ public class MainActivity extends AppCompatActivity {
         db= Room.databaseBuilder(getApplicationContext(),
                 DataBase.class, "Prestamo").allowMainThreadQueries().build();
         Bundle bundle = getIntent().getExtras();
-        int id = bundle.getInt("ID");
+        id = bundle.getInt("ID");
+        posicion = bundle.getInt("posicion");
         if(id!=0){
             Actualizar(id);
         }
@@ -98,7 +100,10 @@ public class MainActivity extends AppCompatActivity {
             nuevo.sexo = cadena_sexo;
             nuevo.ocupacion = cadena_ocupacion;
             nuevo.apellido = cadena_apellido;
+            if(id!=0)
+                nuevo.setId_client(id);
             Intent intent = new Intent();
+            intent.putExtra("posicion", posicion);
             intent.putExtra("cliente", (Serializable) nuevo);
             setResult(RESULT_OK, intent); //Le mandamos a decir que el usuario dio clic en cancelar a la activity que nos invoco
             finish(); //Cerramos la activity
