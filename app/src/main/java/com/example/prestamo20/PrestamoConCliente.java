@@ -2,13 +2,17 @@ package com.example.prestamo20;
 
 import android.arch.persistence.room.Embedded;
 
-public class PrestamoConCliente {
+import java.io.Serializable;
+
+public class PrestamoConCliente implements Serializable {
 
     @Embedded
     private Client client;
 
     @Embedded
     private Prestamo prestamo;
+
+
 
     public Client getClient() {
         return client;

@@ -22,6 +22,13 @@ public interface PrestamoDao {
     void Actualizar(Prestamo prestamo);
 
     @Transaction
-    @Query("Select nombre, Prestamo.* from Prestamo inner join clientTB on clientTB.id_client = id_cliente")
+    @Query("Select * from Prestamo inner join clientTB on clientTB.id_client = id_cliente")
     List<PrestamoConCliente> ObtenerTodo();
+
+    @Query("Select * from Prestamo inner join clientTB on clientTB.id_client = id_cliente")
+    List<PrestamoConPagos> ObtenerTodoconPGO();
+
+    @Query("SELECT * from Prestamo where id=:id")
+    Prestamo ObtenerPrestamo(int id);
+
 }

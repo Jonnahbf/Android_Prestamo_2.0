@@ -49,4 +49,5 @@ public class Adaptador_Prestamo extends BaseAdapter{
         nombre.setText(lista_prestamo.get(position).getClient().getNombre());
         return convertView;
     }
+
 }

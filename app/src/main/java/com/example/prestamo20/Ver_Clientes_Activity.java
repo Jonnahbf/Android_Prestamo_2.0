@@ -40,14 +40,16 @@ public class Ver_Clientes_Activity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         db.clienteDao().Borrar(client);
-                        lista_clientes.remove(client);
+                        lista_clientes.remove(pos);
                         Toast.makeText(Ver_Clientes_Activity.this, "Eliminado!", Toast.LENGTH_SHORT).show();
                         adapter.notifyItemRemoved(pos);
-                        // adapter.notifyDataSetChanged();
+
+                        //adapter.notifyDataSetChanged();
                     }
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
+
             }
         });
 
@@ -73,7 +75,6 @@ public class Ver_Clientes_Activity extends AppCompatActivity {
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llm);
         rv.setAdapter(adapter);
-
     }
 
 
